@@ -7,7 +7,7 @@ const CardPizza = ({ desc, id, img, ingredients, name, price }) => {
 
   return (
     <div className="card mt-5 mb-5">
-      <img src={img} alt={`Pizza ${name}`} className="card-img" />
+      <img src={img} alt={`Pizza ${name}`} className="card-img-top" />
       <h4 className="text-start text-capitalize display-6 p-1">
         Pizza {capitalize(name)}
       </h4>
