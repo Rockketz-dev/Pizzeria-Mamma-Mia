@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 
 const Pizza = () => {
-  const [pizza, setPizza] = useState(null) 
+  const [pizza, setPizza] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import CardPizza from './CardPizza'
-import Header from './Header'
+import CardPizza from '../components/CardPizza'
+import Header from '../components/Header'
 
 const Home = () => {
   const [pizzas, setPizzas] = useState([])
@@ -42,6 +42,8 @@ const Home = () => {
   return (
     <>
       <Header />
+      <h1 className="text-center mt-3">Nuestras Pizzas</h1>
+      <hr />
       <div className="cards-container">
         {loading && <p>Cargando...</p>}
         {error && <p>{error}</p>}
