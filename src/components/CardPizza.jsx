@@ -1,9 +1,12 @@
 import '../components/CardPizza.css'
+import { useContext } from 'react'
+import { CartContext } from '../context/CartContext'
 
-const CardPizza = ({ desc, id, img, ingredients, name, price }) => {
-  const capitalize = text => {
-    return text.charAt(0).toUpperCase() + text.slice(1)
-  }
+const CardPizza = ({ desc, id, img, ingredients = [], name, price }) => {
+  const { addToCart } = useContext(CartContext)
+
+  const capitalize = text =>
+    text ? text.charAt(0).toUpperCase() + text.slice(1) : ''
 
   return (
     <div className="card mt-5 mb-5">
@@ -16,11 +19,15 @@ const CardPizza = ({ desc, id, img, ingredients, name, price }) => {
       <hr />
       <h5 className="text-start p-2">Ingredientes:</h5>
       <ul>
-        {ingredients.map((ingredient, index) => (
-          <li key={index} className="text-start">
-            {capitalize(ingredient)}
-          </li>
-        ))}
+        {ingredients.length > 0 ? (
+          ingredients.map((ingredient, index) => (
+            <li key={index} className="text-start">
+              {capitalize(ingredient)}
+            </li>
+          ))
+        ) : (
+          <li className="text-start">No hay ingredientes disponibles</li>
+        )}
       </ul>
       <hr />
       <h5>Precio: ${price.toLocaleString('es-CL')}</h5>
@@ -29,7 +36,21 @@ const CardPizza = ({ desc, id, img, ingredients, name, price }) => {
         <button className="btn btn-outline-secondary p-2" type="button">
           Ver Más 👀
         </button>
-        <button className="btn btn-dark p-2" type="button">
+        <button
+          className="btn btn-dark p-2"
+          type="button"
+          onClick={() => {
+            console.log('Agregando al carrito:', {
+              id,
+              name,
+              img,
+              price,
+              ingredients,
+              desc,
+            })
+            addToCart({ id, name, img, price, ingredients, desc })
+          }}
+        >
           Añadir 🛒
         </button>
       </div>
