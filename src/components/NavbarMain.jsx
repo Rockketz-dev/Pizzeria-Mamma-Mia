@@ -1,11 +1,13 @@
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import Container from 'react-bootstrap/Container'
 import Nav from 'react-bootstrap/Nav'
 import Navbar from 'react-bootstrap/Navbar'
 import { useContext } from 'react'
 import { CartContext } from '../context/CartContext'
+import { UserContext } from '../context/UserContext'
 
 const NavbarMain = () => {
+  const { isAuthenticated, login, logout } = useContext(UserContext)
   const { formattedTotal } = useContext(CartContext)
 
   return (
@@ -21,33 +23,71 @@ const NavbarMain = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
-            <Link to="/" className="text-decoration-none ms-3 text-white">
+            <NavLink
+              to="/"
+              className={({ isActive }) =>
+                `text-decoration-none ms-3 ${
+                  isActive ? 'active' : 'text-white'
+                }`
+              }
+            >
               Home
-            </Link>
-            <Link
-              to="/register"
-              className="text-decoration-none ms-3 text-white"
+            </NavLink>
+
+            {isAuthenticated ? (
+              <>
+                <NavLink
+                  to="/profile"
+                  className={({ isActive }) =>
+                    `text-decoration-none ms-3 ${
+                      isActive ? 'active' : 'text-white'
+                    }`
+                  }
+                >
+                  Profile
+                </NavLink>
+                <a
+                  className="text-decoration-none ms-3 text-white"
+                  onClick={logout}
+                >
+                  Logout
+                </a>
+              </>
+            ) : (
+              <>
+                <NavLink
+                  to="/register"
+                  className={({ isActive }) =>
+                    `text-decoration-none ms-3 ${
+                      isActive ? 'active' : 'text-white'
+                    }`
+                  }
+                >
+                  Register
+                </NavLink>
+                <NavLink
+                  to="/login"
+                  className={({ isActive }) =>
+                    `text-decoration-none ms-3 ${
+                      isActive ? 'active' : 'text-white'
+                    }`
+                  }
+                >
+                  Login
+                </NavLink>
+              </>
+            )}
+
+            <NavLink
+              to="/cart"
+              className={({ isActive }) =>
+                `text-decoration-none ms-3 ${
+                  isActive ? 'active' : 'text-white'
+                }`
+              }
             >
-              Register
-            </Link>
-            <Link to="/login" className="text-decoration-none ms-3 text-white">
-              Login
-            </Link>
-            <Link to="/cart" className="text-decoration-none ms-3 text-white">
               Cart
-            </Link>
-            <Link to="/pizza" className="text-decoration-none ms-3 text-white">
-              Pizza
-            </Link>
-            <Link
-              to="/profile"
-              className="text-decoration-none ms-3 text-white"
-            >
-              Profile
-            </Link>
-            <Link to="/404" className="text-decoration-none ms-3 text-white">
-              NotFound
-            </Link>
+            </NavLink>
           </Nav>
 
           <div className="d-flex border border-primary-subtle">

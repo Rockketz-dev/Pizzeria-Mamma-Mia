@@ -1,7 +1,11 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import Swal from 'sweetalert2'
+import { UserContext } from '../context/UserContext'
+import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
+  const { login } = useContext(UserContext)
+  const navigate = useNavigate()
   const [logeo, setLogeo] = useState({
     mail: '',
     password: '',
@@ -9,6 +13,11 @@ const Login = () => {
 
   const [errors, setErrors] = useState({})
   const [generalError, setGeneralError] = useState('')
+
+  const handleLogin = () => {
+    login() // Llamamos la función login
+    navigate('/') // Redirige a Home ("/")
+  }
 
   const handleChange = e => {
     const { name, value } = e.target
@@ -61,6 +70,9 @@ const Login = () => {
       icon: 'success',
       confirmButtonText: 'Aceptar',
     })
+
+    // Aquí ya llamamos al handleLogin después de que todo es válido
+    handleLogin()
   }
 
   return (
@@ -98,6 +110,7 @@ const Login = () => {
 
           <hr />
 
+          {/* Se usa type="submit" para el botón y manejar la acción con el onSubmit del formulario */}
           <button type="submit" className="btn btn-dark btn-lg">
             <i className="fa-solid fa-arrow-up-right-from-square"></i> Ingresar
           </button>

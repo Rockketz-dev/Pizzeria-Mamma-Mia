@@ -10,26 +10,54 @@ import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import Profile from './pages/Profile'
 import { CartProvider } from './context/CartContext'
+import { UserProvider } from './context/UserContext'
+import ProtectedRoute from './components/ProtectedRoute'
+import RestrictedRoute from './components/RestrictedRoute'
 
 const App = () => {
   return (
     <>
-      <CartProvider>
-        <BrowserRouter>
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/pizza" element={<Pizza />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="*" element={<NotFound />} />
-            <Route path="/404" element={<NotFound />} />
-            <Route path="/profile" element={<Profile />} />
-          </Routes>
-          <Footer />
-        </BrowserRouter>
-      </CartProvider>
+      <UserProvider>
+        <CartProvider>
+          <BrowserRouter>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/pizza/:id" element={<Pizza />} />
+              <Route path="/cart" element={<Cart />} />
+              {/* Rutas restringidas: si el usuario está autenticado, redirige a Home */}
+              <Route
+                path="/login"
+                element={
+                  <RestrictedRoute>
+                    <Login />
+                  </RestrictedRoute>
+                }
+              />
+              <Route
+                path="/register"
+                element={
+                  <RestrictedRoute>
+                    <Register />
+                  </RestrictedRoute>
+                }
+              />
+              {/* Ruta protegida: solo accesible si el usuario está autenticado */}
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+              <Route path="/404" element={<NotFound />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <Footer />
+          </BrowserRouter>
+        </CartProvider>
+      </UserProvider>
     </>
   )
 }

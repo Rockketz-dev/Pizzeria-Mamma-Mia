@@ -1,9 +1,11 @@
 import { useContext } from 'react'
 import { CartContext } from '../context/CartContext'
+import { UserContext } from '../context/UserContext'
 
 const Cart = () => {
   const { cart, addToCart, removeFromCart, totalPrice, clearCart } =
     useContext(CartContext)
+  const { isAuthenticated } = useContext(UserContext) // Usamos isAuthenticated en lugar de token
 
   // Función para capitalizar el nombre
   const capitalize = text => text.charAt(0).toUpperCase() + text.slice(1)
@@ -37,7 +39,7 @@ const Cart = () => {
                   <button
                     className="btn btn-outline-danger"
                     type="button"
-                    onClick={() => removeFromCart(pizza.id)} // Ahora usa removeFromCart
+                    onClick={() => removeFromCart(pizza.id)}
                   >
                     -
                   </button>
@@ -45,7 +47,7 @@ const Cart = () => {
                   <button
                     className="btn btn-outline-success"
                     type="button"
-                    onClick={() => addToCart(pizza)} // Ahora usa addToCart
+                    onClick={() => addToCart(pizza)}
                   >
                     +
                   </button>
@@ -62,6 +64,9 @@ const Cart = () => {
 
         {cart.length > 0 && (
           <div className="text-center">
+            <button disabled={!isAuthenticated} className="btn btn-success m-2">
+              Pagar
+            </button>
             <button className="btn btn-danger" onClick={clearCart}>
               Vaciar carrito 🗑️
             </button>

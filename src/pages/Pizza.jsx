@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 
 const Pizza = () => {
+  const { id } = useParams() // Obtiene el id desde la URL
   const [pizza, setPizza] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
@@ -8,23 +10,20 @@ const Pizza = () => {
   const getPizza = async () => {
     try {
       setLoading(true)
-      const response = await fetch('http://localhost:5001/api/pizzas/p001') // Estoy trabajando en Mac y no me dejaba usar el puerto :5000 así que lo cambié a :5001
+      const response = await fetch(`http://localhost:5001/api/pizzas/${id}`) // Ruta dinámica con el id
       if (!response.ok) {
         throw new Error('No se pudo obtener la pizza')
       }
       const data = await response.json()
 
-      // Extraer Datos
-      const pizzaInfo = {
+      setPizza({
+        id: data.id,
         nombre: data.name,
         precio: data.price,
         ingredientes: data.ingredients,
         imagen: data.img,
         descripcion: data.desc,
-        id: data.id,
-      }
-
-      setPizza(pizzaInfo)
+      })
     } catch (error) {
       console.log(error)
       setError('No se han encontrado Pizzas')
@@ -34,8 +33,8 @@ const Pizza = () => {
   }
 
   useEffect(() => {
-    getPizza()
-  }, [])
+    if (id) getPizza() // Solo ejecuta la petición si id está definido
+  }, [id])
 
   return (
     <>
@@ -52,7 +51,7 @@ const Pizza = () => {
             />
             <div className="card-body">
               <h1 className="card-title">Pizza {pizza.nombre}</h1>
-              <p>Precio: ${pizza.precio}</p>
+              <p>Precio: ${pizza.precio.toLocaleString('es-CL')}</p>
               <hr />
               <h4>Ingredientes:</h4>
               <ul>
@@ -64,10 +63,10 @@ const Pizza = () => {
               <p>{pizza.descripcion}</p>
               <hr />
               <div className="text-center">
-                <button href="#" className="btn btn-outline-dark m-2">
+                <button className="btn btn-outline-dark m-2">
                   Agregar al Carrito
                 </button>
-                <button href="#" className="btn btn-outline-success m-2">
+                <button className="btn btn-outline-success m-2">
                   Comprar Ahora
                 </button>
               </div>
