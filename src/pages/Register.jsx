@@ -1,7 +1,12 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import Swal from 'sweetalert2'
+import { UserContext } from '../context/UserContext'
+import { useNavigate } from 'react-router-dom'
 
 const Register = () => {
+  const { register } = useContext(UserContext) // Obtenemos la función register
+  const navigate = useNavigate()
+
   const [users, setUsers] = useState({
     mail: '',
     password: '',
@@ -13,11 +18,7 @@ const Register = () => {
 
   const handleChange = e => {
     const { name, value } = e.target
-
-    // Actualizamos el estado del usuario
     setUsers({ ...users, [name]: value })
-
-    // Validamos el campo en tiempo real
     validate(name, value)
   }
 
@@ -55,10 +56,9 @@ const Register = () => {
     setErrors(newErrors)
   }
 
-  const handleResult = e => {
-    e.preventDefault() // Evitamos el refresco de la página
+  const handleResult = async e => {
+    e.preventDefault()
 
-    // Verificamos si hay errores
     if (
       Object.keys(errors).length > 0 ||
       !users.mail ||
@@ -69,13 +69,24 @@ const Register = () => {
       return
     }
 
-    if (users.password === users.confirmPassword) {
-      Swal.fire({
-        title: 'Registro Exitoso',
-        text: 'Su registro fue exitoso',
-        icon: 'success',
-        confirmButtonText: 'Aceptar',
-      })
+    try {
+      const success = await register(users.mail, users.password) // Usamos el método del contexto
+
+      if (success) {
+        Swal.fire({
+          title: 'Registro Exitoso',
+          text: 'Tu cuenta ha sido creada correctamente.',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+        })
+
+        navigate('/') // Redirige a la página principal después del registro
+      } else {
+        setGeneralError('Error al registrarse. Inténtalo de nuevo.')
+      }
+    } catch (error) {
+      console.error('Error durante el registro:', error)
+      setGeneralError('Ocurrió un error. Inténtalo de nuevo.')
     }
   }
 
@@ -86,9 +97,7 @@ const Register = () => {
           <h1>Registro</h1>
           <hr />
           <div className="mb-3">
-            <label className="form-label">
-              <i className="fa-regular fa-envelope"></i> Email:
-            </label>
+            <label className="form-label">Email:</label>
             <input
               type="text"
               placeholder="Ingresa tu Email"
@@ -100,9 +109,7 @@ const Register = () => {
             {errors.mail && <p className="text-danger">{errors.mail}</p>}
           </div>
           <div className="mb-3">
-            <label className="form-label">
-              <i className="fa-regular fa-pen-to-square"></i> Password:
-            </label>
+            <label className="form-label">Password:</label>
             <input
               type="password"
               placeholder="Ingresa tu Contraseña"
@@ -116,9 +123,7 @@ const Register = () => {
             )}
           </div>
           <div className="mb-3">
-            <label className="form-label">
-              <i className="fa-solid fa-check-double"></i> Confirma Password:
-            </label>
+            <label className="form-label">Confirma Password:</label>
             <input
               type="password"
               placeholder="Confirma tu Contraseña"
@@ -135,7 +140,7 @@ const Register = () => {
           <hr />
 
           <button type="submit" className="btn btn-dark btn-lg">
-            <i className="fa-solid fa-arrow-up-right-from-square"></i> Enviar
+            Enviar
           </button>
 
           {generalError && <p className="text-danger mt-3">{generalError}</p>}

@@ -4,7 +4,7 @@ import { UserContext } from '../context/UserContext'
 import { useNavigate } from 'react-router-dom'
 
 const Login = () => {
-  const { login } = useContext(UserContext)
+  const { login } = useContext(UserContext) // Obtenemos la función login del contexto
   const navigate = useNavigate()
   const [logeo, setLogeo] = useState({
     mail: '',
@@ -13,11 +13,6 @@ const Login = () => {
 
   const [errors, setErrors] = useState({})
   const [generalError, setGeneralError] = useState('')
-
-  const handleLogin = () => {
-    login() // Llamamos la función login
-    navigate('/') // Redirige a Home ("/")
-  }
 
   const handleChange = e => {
     const { name, value } = e.target
@@ -55,7 +50,7 @@ const Login = () => {
     setErrors(newErrors)
   }
 
-  const handleResult = e => {
+  const handleResult = async e => {
     e.preventDefault() // Evitamos el refresco de la página
 
     // Verificamos si hay errores
@@ -64,15 +59,27 @@ const Login = () => {
       return
     }
 
-    Swal.fire({
-      title: 'Acceso Correcto :)',
-      text: 'Para continuar haz click en Aceptar',
-      icon: 'success',
-      confirmButtonText: 'Aceptar',
-    })
+    try {
+      // Llamamos a la función login del contexto
+      const success = await login(logeo.mail, logeo.password)
 
-    // Aquí ya llamamos al handleLogin después de que todo es válido
-    handleLogin()
+      if (success) {
+        Swal.fire({
+          title: 'Acceso Correcto :)',
+          text: 'Para continuar haz click en Aceptar',
+          icon: 'success',
+          confirmButtonText: 'Aceptar',
+        })
+
+        // Redirigimos al usuario a la página principal
+        navigate('/')
+      } else {
+        setGeneralError('Credenciales incorrectas. Inténtalo de nuevo.')
+      }
+    } catch (error) {
+      console.error('Error durante el login:', error)
+      setGeneralError('Ocurrió un error durante el login. Inténtalo de nuevo.')
+    }
   }
 
   return (
